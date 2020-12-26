@@ -1,0 +1,122 @@
+
+8061 Disassembler          Version 1.15         4-16-98
+
+This is an 8061 disassembler, although the instructions are output as 8096
+instructions. As people have told me of differences, I have
+incorporated them. For example, the FF op-code is a reset on the 8096,
+and a nop on the 8061. So far, there are very few of these differences.
+Hopefully, this means there aren't very many of these.
+
+The executable in this archive was compiled with Microsoft VC++5. So its
+a 32-bit executable and requires Windows 95. The source can probably be
+made to run on most anything.
+
+Usage:
+
+        dis8061   [-x]  <base_file>
+
+        The '-x' flag causes the hex portion of the output to
+        be suppressed so the output is suitable as input to an assembler.
+
+        The disassembler will access two files and create(or rewrite)
+        two more. The binary input file is 'base_file.bin'. The directives
+        are read from 'base_file.dir'. The main output of the disassembler
+        is written to 'base_file.lst', unless the '-x' flag is used. In
+        this case, the disassembled output is written to 'base_file.asm'.
+        The cross reference output is written to 'base_file.jc'.
+
+        The input file must be binary. Intel, Motorola, or other formats
+        aren't supported.
+
+Example:
+
+        dis8061  a9l
+
+        This will read an EPROM image from 'a9l.bin', the directives from
+        'a9l.dir', and write the output to 'a9l.lst'. The output will
+        include the PC and HEX contents of each location adjacent to the
+        disassembled instructions. The cross reference output will be
+        written to 'a9l.jc'
+
+
+Directives:
+
+        The following directives are processed. The format is currently pretty
+        rigid. Currently, the specified columns are required. 'LLLL' is a
+        location, it must be 4 hex digits.
+
+      col 1      col 13    col 18
+        |          |         |
+
+        ascii      LLLL
+        byte       LLLL
+        code       LLLL
+        comment    LLLL      <end of line comment>
+        commentl   LLLL      <full line comment>
+        hex        LLLL
+        ignore     LLLL
+        label      LLLL      <label_name>
+        word       LLLL
+
+
+
+***********************
+History
+***********************
+Version  1.15
+        - Fixed several errors.
+            - divu was incorrectly producing 3 operands instead of 2.
+            - others...
+        - Changes to make output assemble'able
+            - output the pre-defined symbols as EQU's
+            - prefix error messages with ";" to make them comments
+            - prepend ";" to comments, if not present in directive.
+        - If "-x" is specified, output file is  <file>.asm for input to
+          assembler.
+
+
+Version  1.14
+        - Fix command that is 1 byte before the next command. Used
+          to give error.
+        - More error reporting, with command number.
+
+Version  1.13
+
+        - Fix end-of-line comments. Previously didn't work at all
+        - Allow upper case hex characters in directives.
+        - Improved reporting on errors in directives.
+        - Provide names for the registers that are different registers
+          when written, than when read. 'Watchdog_Timer', for example.
+        - Fix operand of indexed and indirect addressing. Previously,
+          if these were auto-increment or long, respectively, the
+          register was incorrectly output as an odd register number.
+
+
+Version  1.12
+
+        - Add call/jump cross reference output
+
+
+Version  1.11
+
+        - Fix destination address of LJMP and LCALL
+        - Change 'byte' and 'word' output to be single value per line
+
+
+Version  1.10
+
+        - Automatic generation of labels at the destination of all
+          jumps and calls.
+        - Some new commands in the directive file
+        - Command structure has changed slightly. Previous version
+          had start and end addresses. Now only a start address is
+          specified, and the command is in effect until the next
+          start address.
+        - Commands don't have to be ordered. Commands  are sorted after
+          they are read in.
+        - There is a default set of labels and commands suitable
+          to the EEC-IV. For example, the origin is $2000
+        - An option to suppress the hex output. This would allow the
+          output of the disassembler to be the input to an 
+          assembler.
+

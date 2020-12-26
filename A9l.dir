@@ -1,0 +1,279 @@
+label       0a00 KAM
+label       0c00 Calibration_Console
+label       1000 Engineering_Console
+
+code        2000
+ignore      2004
+word        200c
+byte        2020
+word        2022
+code        2032
+code        2533
+
+word        3e2b
+code        3e31
+
+word        3e38
+code        3e3e
+
+word        40af
+code        40b5
+
+word        40c3
+code        40c9
+
+word        40ef
+code        40f5
+
+word        410f
+code        4115
+
+word        4126
+code        412c
+
+word        4d7f
+code        4d85
+
+word        5403
+code        5409
+
+word        6dad
+code        6db3
+
+word        3a12
+code        3a14
+
+word        3c4e
+code        3c50
+
+word        3d46
+code        3d48
+
+word        3d53
+code        3d55
+
+word        525c
+code        525e
+
+word        59cc
+code        59ce
+
+word        8593
+code        8595
+
+commentl    2010 ************************************************************
+commentl    2010 *  Interrupt Vectors
+commentl    2010 ************************************************************
+comment     2010 HSO Port Output Interrupt #2
+comment     2012 Master I/O Timer Overflow Interrupt
+comment     2014 A/D End of Conversion Interrupt
+comment     2016 HSI Port Input Data Available
+comment     2018 External Interrupt Vector
+comment     201a HSO Port Output Interrupt #1
+comment     201c HSI #1 Interrupt Vector
+comment     201e HSI #0 Interrupt Vector
+
+commentl    2032 ************************************************************
+commentl    2032 *  Reset Subroutine
+commentl    2032 *
+commentl    2032 *    input-  REG$2A   bit 5 =  ???
+commentl    2032 *                     bit 6 =  ???
+commentl    2032 *           - call from reset -> $2A = 00
+commentl    2032 *           - call at L8451   -> $2A = ??
+commentl    2032 ************************************************************
+commentl    2036 * Save  REG$2A
+commentl    2039 * Clear locations from  $0016  through  $0489
+commentl    2048 * if byte $2A at entry has both bits 5 and 6 off,
+commentl    2048 *  then set bit 0  in  $EF
+commentl    2058 * load  $72, $74, $76  with parameters for this EPROM
+commentl    2064 ****
+commentl    2064 * init various locations in memory, use tables starting at $862a
+commentl    2064 * see description of their format there
+commentl    2064 ****
+commentl    2068 * outer loop - setup to process an init table
+commentl    2074 * inner loop - process an init table
+comment     2074 in this EPROM go until $8650 (1st table)
+comment     2079 get lo-byte of addr to init
+comment     207c get current contents
+comment     207f OR byte from table at $862a (1st table)
+comment     2082 put byte back
+comment     2087 ****  if  ????   then reset again ???
+comment     2089 get addr of next table ?
+commentl    208e * init table processing done
+comment     2091 ???
+comment     2094 ???
+comment     2097 ???
+commentl    209a ***** ----
+commentl    20b7 * if  ???   then set  bit 6 in $E6
+commentl    20c5 * if  ???   then
+commentl    20d4 * if  ???   then
+commentl    20f0 * wait for HSI inputs to clear
+commentl    20fb * ???
+commentl    2104 * if  ???   then
+commentl    210d * if  ???   then
+commentl    2116 * if  ???   then
+commentl    211f * set up HSI ??
+commentl    2127 * if  ???   then
+commentl    2137 * if  ???   then
+commentl    2149 * End Reset Subroutine
+commentl    2149 *
+
+commentl    2149 *
+commentl    2149 ************************************************************
+commentl    2149 * Jump here from RESET
+commentl    2149 ************************************************************
+commentl    2172 ** End First Jump OUTA Reset **
+comment     2172 ***** wait for watchdog ??? 
+
+commentl    2751 ************************************************************
+commentl    2751 *  High Speed Output Port Output Interrupt #2 Routine
+commentl    2751 ************************************************************
+commentl    273d ************************************************************
+commentl    273d *  Master I/O Timer Overflow Interrupt Routine
+commentl    273d ************************************************************
+commentl    2750 ;   fall through to return instruction below
+commentl    2750 ************************************************************
+commentl    2750 **** above routine falls through to this return
+commentl    2750 ****   following interrupts are ignored by this routine
+commentl    2750 ****
+commentl    2750 **** A/D End of Conversion Interrupt Routine
+commentl    2750 **** High Speed Input Port Input Data Available Routine
+commentl    2750 **** External Interrupt Routine
+commentl    2750 **** High Speed Input #1 Interrupt Routine
+commentl    2750 ************************************************************
+
+commentl    25b9 ************************************************************
+commentl    25b9 *  High Speed Output Port Output Interrupt #1 Routine
+commentl    25b9 ************************************************************
+
+commentl    272b ************************************************************
+commentl    272b *  High Speed Input #0 Interrupt Routine
+commentl    272b ************************************************************
+
+commentl    3601 *
+commentl    3601 ************************************************************
+commentl    3601 * routine ???
+commentl    3601 ************************************************************
+commentl    3606 ************************************************************
+commentl    3606 * routine ???
+commentl    3606 ************************************************************
+commentl    360c ************************************************************
+commentl    360c * routine ???
+commentl    360c ************************************************************
+
+commentl    3654 *
+commentl    3654 ************************************************************
+commentl    3654 *  routine  
+commentl    3654 *    loads  $32, $34, $36   from 3 parameters passed
+commentl    3654 ************************************************************
+
+commentl    365e **** enter here to load $36 from 1 parameter passed
+
+commentl    3695 *
+commentl    3695 ************************************************************
+commentl    3695 *  Get caller's next parameter - incr return address beyond it
+commentl    3695 *     return in  Word $3C
+commentl    3695 *  If positive, returned as is.
+commentl    3695 *  If negative, return:
+commentl    3695 *     parameter bits 0-11
+commentl    3695 *   + contents ($00E0 + parameter bits 8-15 div by 8 (trunc even) )
+commentl    3695 ************************************************************
+comment     3695 $38 = this return addr
+comment     3697 $3A = caller's return addr
+comment     3699 $3C = 1st byte of parameter (LSB)
+comment     369c $3D = 2nd byte of parameter (MSB)
+comment     36a3 return if parameter positive
+comment     36ac $38 = ($00 | MSB of param) divided by 8
+comment     36af truncate to even
+
+commentl    36b8 *
+commentl    36b8 ************************************************************
+commentl    36b8 *  routine   ???
+commentl    36b8 ************************************************************
+
+commentl    84b2 *
+commentl    84b2 ************************************************************
+commentl    84b2 *     ???
+commentl    84b2 *  check for and set up calibration console
+commentl    84b2 *  if $0D00  is  $2A,  console is present
+commentl    84b2 *  this routine called only at reset
+commentl    84b2 ************************************************************
+comment     84ba console not present
+commentl    8530 **** end of routine
+commentl    8530 *
+
+commentl    85a3 *
+commentl    85a3 ************************************************************
+commentl    85a3 *     ???
+commentl    85a3 *  this routine called only at reset
+commentl    85a3 ************************************************************
+
+commentl    85f5 *
+commentl    85f5 ************************************************************
+commentl    85f5 *     ???
+commentl    85f5 *  this routine called only at reset
+commentl    85f5 ************************************************************
+commentl    8629 **** end of routine
+commentl    8629 *
+
+byte        8629
+
+word        862a
+commentl    862a *
+commentl    862a ************************************************************
+commentl    862a *  an array or linked list??  of tables; each is formatted 
+commentl    862a *  as described in following block. Code at L2068 and L2087 to
+commentl    862a *  go to next block. Each block handled by loop at L2074 
+commentl    862a ************************************************************
+commentl    862a * 1st word = start address to init (hi-byte only,  lo-byte ignored)
+commentl    862a * 2nd word = address of byte past end of table
+commentl    862a * each pair of bytes following 2nd word until address in 2nd word
+commentl    862a *     1st byte = lo-byte of addr to init (hi-byte from 1st word above)
+commentl    862a *     2nd byte = data to OR into location being init'ed
+commentl    862a *
+commentl    862a * in this EPROM:
+commentl    862a *     - this table is processed by loop at L2074
+commentl    862a *     - since this are has been cleared by the loop at L203D
+commentl    862a *          the OR is the same as initializing these locations
+commentl    862a *     - 22 bytes from 862e thru 864f are processed
+commentl    862a *           (00)ee  has  04  OR'ed into it
+commentl    862a *           (00)a1  has  84  OR'ed into it
+commentl    862a *           (00)4f  has  01  OR'ed into it
+commentl    862a *             ...
+commentl    862a ************************************************************
+comment     862a hi-byte = 'page' to init
+comment     862c contains addr of end of init table
+
+byte        862e
+comment     862e start of 1st init table
+commentl    8650 * end of 1st init table
+commentl    8650 *
+commentl    8650 * start of 2nd init table ???
+hex         8650
+
+ignore      86e8
+commentl    86e8 * ignored bytes all FF
+
+ignore      8c00
+commentl    8c00 * Data
+
+hex         8de2
+commentl    8de2 *
+commentl    8de2 ************************************************************
+commentl    8de2 MAF transfer function
+commentl    8de2 ************************************************************
+commentl    8e5a * End of MAF transfer function
+commentl    8e5a *
+ignore      8e5a
+
+hex         9160
+commentl    9160 *
+commentl    9160 ************************************************************
+commentl    9160 Injector Time Table
+commentl    9160 ************************************************************
+
+commentl    91b0 * End of Injector Time Table
+commentl    91b0 *
+ignore      91b0
+
+
